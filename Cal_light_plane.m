@@ -12,11 +12,6 @@ for i = 1:1:length(p_cloud_pixel)
   p_cloud_wcs = [p_cloud_wcs,p_wcs];
 end
 
-x_wcs = p_cloud_wcs(1,:);
-y_wcs = p_cloud_wcs(2,:);
-z_wcs = p_cloud_wcs(3,:);
-scatter3(x_wcs, y_wcs, z_wcs, 'filled');
-hold on;
 p_cloud_wcs = p_cloud_wcs';
 
 %平面拟合
@@ -30,7 +25,7 @@ d=-dot([a b c],xyz0);
 distance = abs([a,b,c,d]* [p_cloud_wcs';ones(1,length(p_cloud_wcs))])/sqrt(a^2+b^2+c^2);
 
 % 迭代，抛弃坏点
-while(max(distance) > 1.0)
+while(max(distance) > 1)
   d_max = find(distance == max(distance));
   p_cloud_wcs(d_max,:) = [];
   
@@ -44,6 +39,12 @@ while(max(distance) > 1.0)
   
   distance = abs([a,b,c,d]* [p_cloud_wcs';ones(1,length(p_cloud_wcs))])/sqrt(a^2+b^2+c^2);
 end
+
+x_wcs = p_cloud_wcs(:,1);
+y_wcs = p_cloud_wcs(:,2);
+z_wcs = p_cloud_wcs(:,3);
+scatter3(x_wcs, y_wcs, z_wcs, 'filled');
+hold on;
 
 light_plane_wcs = [a,b,c,d];
 light_plane_ccs = light_plane_wcs * Inv_Mex(1);
