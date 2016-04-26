@@ -48,8 +48,9 @@ hold on;
 
 light_plane_wcs = [a,b,c,d];
 light_plane_ccs = light_plane_wcs * Inv_Mex(1);
+mex_wcs = Mex(1);
 theta_plane = rad2deg(acos(c / norm([a,b,c])));
-save('light_plane.mat','light_plane_wcs','light_plane_ccs','theta_plane');
+save('light_plane.mat','light_plane_wcs','light_plane_ccs','theta_plane','mex_wcs');
 
 % Õº–ŒªÊ÷∆
 xfit = min(x_wcs):1:max(x_wcs);
