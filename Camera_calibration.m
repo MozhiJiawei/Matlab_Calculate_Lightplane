@@ -28,6 +28,8 @@ imageFileNames = {'D:\jiawei\Matlab_Calculate_Lightplane\pic_input\calibimages\1
   'D:\jiawei\Matlab_Calculate_Lightplane\pic_input\calibimages\23.bmp',...
   'D:\jiawei\Matlab_Calculate_Lightplane\pic_input\calibimages\24.bmp',...
   'D:\jiawei\Matlab_Calculate_Lightplane\pic_input\calibimages\25.bmp',...
+  'D:\jiawei\Matlab_Calculate_Lightplane\pic_input\calibimages\26.bmp',...
+  'D:\jiawei\Matlab_Calculate_Lightplane\pic_input\calibimages\27.bmp',...
   };
 
 % Detect checkerboards in images
@@ -35,7 +37,7 @@ imageFileNames = {'D:\jiawei\Matlab_Calculate_Lightplane\pic_input\calibimages\1
 imageFileNames = imageFileNames(imagesUsed);
 
 % Generate world coordinates of the corners of the squares
-squareSize = 6;  % in units of 'mm'
+squareSize = 10;  % in units of 'mm'
 worldPoints = generateCheckerboardPoints(boardSize, squareSize);
 
 % Calibrate the camera
