@@ -1,7 +1,7 @@
 function [ result_wcs ] = Img_to_wcs( u, v, n_of_Mex )
 %UNTITLED 此处显示有关此函数的摘要
 %   将像素坐标转换到n坐标系中的Z=0平面上
-load('calibrationSession_firt_try.mat');
+load('calibrationSession.mat');
 intr_mat = calibrationSession.CameraParameters.IntrinsicMatrix;
 
 plane_ccs = [0,0,1,0] * Inv_Mex(n_of_Mex);

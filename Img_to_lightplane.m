@@ -2,7 +2,7 @@ function [ result ] = Img_to_lightplane(u, v, wcs_or_ccs)
 % 激光线转换至相机坐标 OR 世界坐标
 % 读.mat获取内参，光平面参量；
 load('light_plane.mat')
-load('calibrationSession_firt_try.mat')
+load('calibrationSession.mat')
 
 intr_mat = calibrationSession.CameraParameters.IntrinsicMatrix;
 line_ccs = [intr_mat(1,1),0,intr_mat(3,1)-u,0;
