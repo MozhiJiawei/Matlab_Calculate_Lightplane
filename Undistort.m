@@ -2,6 +2,7 @@ function Undistort(pic_num)
 %UNTITLED2 此处显示有关此函数的摘要
 %   此处显示详细说明
 filePathOut = fullfile(pwd,'pic_input','undistortimages');
+imageFileNames = cell(1, pic_num);
 for i = 1:1:pic_num 
   imageFileNames{i} = fullfile(pwd,'pic_input','lightimages',...
       sprintf('%d.bmp',i));
@@ -22,4 +23,3 @@ for i=1:1:pic_num
 end
 
 end
-

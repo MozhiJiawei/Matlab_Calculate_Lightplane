@@ -1,63 +1,68 @@
-p_cloud_pixel = xlsread('point_cloud.xlsx');
-p_cloud_pixel = p_cloud_pixel(1:103,:);
-p_cloud_wcs = [];
+pCloudPixel = xlsread('point_cloud.xlsx');
+% pCloudPixel = pCloudPixel(1:288,:);
+pCloudWcs = [];
+Undistort(8);
+Get_extrinsics(4);
 
 %将所有点转到图1坐标系中
-for i = 1:1:length(p_cloud_pixel)
-  p_wcs = Img_to_wcs(p_cloud_pixel(i,1), p_cloud_pixel(i,2), p_cloud_pixel(i,3));
-  if(p_cloud_pixel(i,3) ~= 1)
-    p_wcs = Wcs_to_wcs(p_wcs, p_cloud_pixel(i,3), 1);
+for i = 1:1:length(pCloudPixel)
+  pWcs = Img_to_wcs(pCloudPixel(i,1), pCloudPixel(i,2), pCloudPixel(i,3));
+  if(pCloudPixel(i,3) ~= 1)
+    pWcs = Wcs_to_wcs(pWcs, pCloudPixel(i,3), 1);
   end
-  p_wcs = p_wcs(1:3);
-  p_cloud_wcs = [p_cloud_wcs,p_wcs];
+  pWcs = pWcs(1:3);
+  pCloudWcs = [pCloudWcs,pWcs];
 end
 
-p_cloud_wcs = p_cloud_wcs';
+pCloudWcs = pCloudWcs';
 
 %平面拟合
-xyz0 = mean(p_cloud_wcs, 1);
-centeredPlane = bsxfun(@minus, p_cloud_wcs, xyz0);
+xyz0 = mean(pCloudWcs, 1);
+centeredPlane = bsxfun(@minus, pCloudWcs, xyz0);
 [U,S,V] = svd(centeredPlane);
 a=V(1,3);
 b=V(2,3);
 c=V(3,3);
 d=-dot([a b c],xyz0);
-distance = abs([a,b,c,d]* [p_cloud_wcs';ones(1,length(p_cloud_wcs))])/sqrt(a^2+b^2+c^2);
+distance = abs([a,b,c,d]* [pCloudWcs';ones(1,length(pCloudWcs))])/sqrt(a^2+b^2+c^2);
 
 % 迭代，抛弃坏点
-while(max(distance) > 1)
-  d_max = find(distance == max(distance));
-  p_cloud_wcs(d_max,:) = [];
-  
-  xyz0 = mean(p_cloud_wcs, 1);
-  centeredPlane = bsxfun(@minus, p_cloud_wcs, xyz0);
-  [U,S,V] = svd(centeredPlane);
-  a=V(1,3);
-  b=V(2,3);
-  c=V(3,3);
-  d=-dot([a b c],xyz0);
-  
-  distance = abs([a,b,c,d]* [p_cloud_wcs';ones(1,length(p_cloud_wcs))])/sqrt(a^2+b^2+c^2);
-end
+% while(max(distance) > 1)
+%   dMax = find(distance == max(distance));
+%   pCloudWcs(dMax,:) = [];
+%   
+%   xyz0 = mean(pCloudWcs, 1);
+%   centeredPlane = bsxfun(@minus, pCloudWcs, xyz0);
+%   [U,S,V] = svd(centeredPlane);
+%   a=V(1,3);
+%   b=V(2,3);
+%   c=V(3,3);
+%   d=-dot([a b c],xyz0);
+%   
+%   distance = abs([a,b,c,d]* [pCloudWcs';ones(1,length(pCloudWcs))])/sqrt(a^2+b^2+c^2);
+% end
 
-x_wcs = p_cloud_wcs(:,1);
-y_wcs = p_cloud_wcs(:,2);
-z_wcs = p_cloud_wcs(:,3);
-scatter3(x_wcs, y_wcs, z_wcs, 'filled');
+xWcs = pCloudWcs(:,1);
+yWcs = pCloudWcs(:,2);
+zWcs = pCloudWcs(:,3);
+scatter3(xWcs, yWcs, zWcs, 'filled');
 hold on;
 
-light_plane_wcs = [a,b,c,d];
-light_plane_ccs = light_plane_wcs * Inv_Mex(1);
-mex_wcs = Mex(1);
-theta_plane = rad2deg(acos(c / norm([a,b,c])));
-save('light_plane.mat','light_plane_wcs','light_plane_ccs','theta_plane','mex_wcs');
+lightPlaneWcs = [a,b,c,d];
+lightPlaneCcs = lightPlaneWcs * Inv_Mex(1);
+mexWcs = Mex(4);
+thetaPlane = rad2deg(acos(c / norm([a,b,c])));
+save('light_plane.mat','lightPlaneWcs','lightPlaneCcs','thetaPlane','mexWcs');
 
 % 图形绘制
-xfit = min(x_wcs):1:max(x_wcs);
-yfit = min(y_wcs):1:max(y_wcs);
+xfit = min(xWcs):1:max(xWcs);
+yfit = min(yWcs):1:max(yWcs);
 [XFIT,YFIT]= meshgrid (xfit,yfit);
 ZFIT = -(d + a * XFIT + b * YFIT)/c;
 mesh(XFIT,YFIT,ZFIT);
 xlabel('X');
 ylabel('Y');
 zlabel('Z');
+
+pixelCloud = xlsread('pixel_cloud.xlsx');
+result = Img_to_lightplane(pixelCloud,'wcs');

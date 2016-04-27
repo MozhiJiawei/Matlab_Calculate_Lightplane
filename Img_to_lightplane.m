@@ -1,23 +1,25 @@
-function [ result ] = Img_to_lightplane(u, v, wcs_or_ccs)
+function [ result ] = Img_to_lightplane(pixelCloud, wcsOrCcs)
 % 激光线转换至相机坐标 OR 世界坐标
 % 读.mat获取内参，光平面参量；
 load('light_plane.mat')
 load('calibrationSession.mat')
 
-intr_mat = calibrationSession.CameraParameters.IntrinsicMatrix;
-line_ccs = [intr_mat(1,1),0,intr_mat(3,1)-u,0;
-    0,intr_mat(2,2),intr_mat(3,2)-v,0];
+intrMat = calibrationSession.CameraParameters.IntrinsicMatrix;
+for i = 1:size(pixelCloud,1)
+  lineCcs = [intrMat(1,1),0,intrMat(3,1)-pixelCloud(i,1),0;...
+    0,intrMat(2,2),intrMat(3,2)-pixelCloud(i,2),0];
 
-light_plane = light_plane_ccs;
+  lightPlane = lightPlaneCcs;
 
-A = [light_plane(:,1:3);line_ccs(:,1:3)];
-B = [-light_plane(:,4);-line_ccs(:,4)];
-result = A\B;
-
-if ( ~strcmp(wcs_or_ccs, 'ccs'))
-  result = [result;1];
-  result = mex_wcs\result;
-  result = result(1:3);
+  A = [lightPlane(:,1:3);lineCcs(:,1:3)];
+  B = [-lightPlane(:,4);-lineCcs(:,4)];
+  result(i,:) = (A\B)';
+  if ( ~strcmp(wcsOrCcs, 'ccs'))
+    result_temp = result(i,:)';
+    result_temp = [result_temp;1];
+    result_temp = mexWcs\result_temp;
+    result(i,:) = result_temp(1:3)';
+  end
 end
 end
 
