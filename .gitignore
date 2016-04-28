@@ -1,12 +1,7 @@
 *.md~
 *.asv
 *.xlsx
-
-# ignore input, intermediate data
-
-light_plane.mat
-lightExtrinsics.mat
-calibrationSession.mat
+*.mat
 
 /pic_input
 

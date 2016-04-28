@@ -1,7 +1,6 @@
 pCloudPixel = xlsread('point_cloud.xlsx');
-% pCloudPixel = pCloudPixel(1:288,:);
 pCloudWcs = [];
-Undistort(8);
+Undistort(10);
 Get_extrinsics(4);
 
 %将所有点转到图1坐标系中
@@ -63,6 +62,3 @@ mesh(XFIT,YFIT,ZFIT);
 xlabel('X');
 ylabel('Y');
 zlabel('Z');
-
-pixelCloud = xlsread('pixel_cloud.xlsx');
-result = Img_to_lightplane(pixelCloud,'wcs');
