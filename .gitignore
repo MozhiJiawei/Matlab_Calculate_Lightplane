@@ -1,3 +1,10 @@
 *.md~
+*.asv
+*.xlsx
+*.mat
 
-light_plane.mat
+/pic_input
+
+# testing program
+
+Testing.m
