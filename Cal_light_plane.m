@@ -1,7 +1,7 @@
-pCloudPixel = xlsread('point_cloud.xlsx');
+pCloudPixel = importdata('ims_points.txt');
 pCloudWcs = [];
-Undistort(10);
-Get_extrinsics(4);
+Undistort(6);
+Get_extrinsics(3);
 
 %将所有点转到图1坐标系中
 for i = 1:1:length(pCloudPixel)
@@ -49,7 +49,7 @@ hold on;
 
 lightPlaneWcs = [a,b,c,d];
 lightPlaneCcs = lightPlaneWcs * Inv_Mex(1);
-mexWcs = Mex(4);
+mexWcs = Mex(1);
 thetaPlane = rad2deg(acos(c / norm([a,b,c])));
 save('light_plane.mat','lightPlaneWcs','lightPlaneCcs','thetaPlane','mexWcs');
 
